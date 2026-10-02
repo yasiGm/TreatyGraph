@@ -5,3 +5,4 @@ obj/
 *.user
 data/raw/
 .DS_Store
+data/leaders_pilot.csv

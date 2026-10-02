@@ -93,7 +93,7 @@ data/raw/cow_diplomacy/Diplomatic_Exchange_2006v1.csv
 data/raw/cow_states/statelist2024.csv
 ```
 
-`data/leaders_pilot.csv` is an extract of Archigos 4.1 for the nine pilot countries (columns `ccode,leader,start,end,exit`).
+`data/leaders_pilot.csv` is **not** in the repository (git-ignored, like `data/raw/`). Build it yourself from Archigos 4.1 (https://rochester.edu/college/faculty/hgoemans/data.htm): keep the nine pilot countries and the columns `ccode,leader,start,end,exit`, with dates as `YYYY-MM-DD`.
 
 ## Ideas / next steps
 
@@ -113,4 +113,4 @@ Please cite the datasets if you reuse the derived data, and check each dataset's
 * Correlates of War Project. State System Membership List, v2024. https://correlatesofwar.org
 * Goemans, H. E., Kristian Skrede Gleditsch, and Giacomo Chiozza. 2009. "Introducing Archigos: A Dataset of Political Leaders." *Journal of Peace Research* 46(2): 269–283. (Archigos 4.1)
 
-Code: MIT (see `LICENSE`). The licence does not extend to the datasets.
+Code: Copyright (c) 2026 Yasaman Gandomi, licensed under the GNU AGPL-3.0 (see `LICENSE`). If you run a modified version as a network service, the AGPL requires you to offer its source to the service's users. The licence does not extend to the datasets, which stay under their owners' terms.
