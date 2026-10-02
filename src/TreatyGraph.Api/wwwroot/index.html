@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TreatyGraph</title>
+<meta name="description" content="Pick two countries and see how their relationship unfolded since 1816: alliances, wars, diplomacy and who was in charge.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>TreatyGraph</h1>
+    <p class="sub">Pick two countries and see how their relationship unfolded since 1816: alliances, wars, diplomatic ties and who was in charge.</p>
+    <nav class="tabs" role="tablist">
+      <button id="tab-pair" role="tab" aria-selected="true">Pair timeline</button>
+      <button id="tab-country" role="tab" aria-selected="false">Country profile</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="view-pair">
+    <div class="picker">
+      <label>Country A <select id="selA"></select></label>
+      <button id="swap" class="ghost" title="Swap countries" aria-label="Swap countries">⇄</button>
+      <label>Country B <select id="selB"></select></label>
+    </div>
+    <div id="pair-out"></div>
+  </section>
+
+  <section id="view-country" hidden>
+    <div class="picker">
+      <label>Country <select id="selC"></select></label>
+    </div>
+    <div id="country-out"></div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p><strong>Read this before trusting a blank timeline.</strong> “No records” means the datasets below contain nothing for that pair or period. It does not mean nothing happened.
+  Coverage differs by source and several sources stop years ago (see the coverage bars on each pair page).</p>
+  <p>Sources: Correlates of War (Formal Alliances v4.1; Inter-State War Data v4.0; Intra-State War Data v4.1; Diplomatic Exchange v2006.1; State System Membership v2024),
+  ATOP 5.1 (Leeds et al.), Archigos 4.1 (Goemans, Gleditsch &amp; Chiozza; pilot countries only).
+  Country identity and borders follow COW state-system membership. Built for portfolio / non-commercial use. Data are served from SQL Server through an ASP.NET Core API; see the README for citations and licence notes.</p>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>
