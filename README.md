@@ -52,6 +52,8 @@ dotnet run --project src/TreatyGraph.Api          # 4. open http://localhost:508
 ```
 
 The default connection string (dev container, `sa` user) is in `src/TreatyGraph.Api/appsettings.json` and in `ImportOptions.cs`.
+> **Note:** the password in `docker-compose.yml`, `appsettings.json` and `ImportOptions.cs` (`Your_strong_Passw0rd!`) is a throw-away dev password for a local container that only listens on `localhost`. It is not a real credential - never reuse it for a real server.
+
 To use another server (for example Azure SQL) pass `--connection "<ado.net string>"` to the importer (add `--no-create-db` if the database already exists) and set `ConnectionStrings__Default` for the API.
 
 The raw CSVs must be in `data/raw/` (git-ignored, see "Data files" below).
