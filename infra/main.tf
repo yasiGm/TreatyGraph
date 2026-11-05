@@ -37,21 +37,31 @@ resource "azurerm_container_app" "api" {
   revision_mode                = "Single"
   workload_profile_name        = "Consumption"
 
+  secret {
+    name  = "sql-connection"
+    value = "Server=tcp:${azurerm_mssql_server.main.fully_qualified_domain_name},1433;Database=treatygraph;User ID=tgadmin;Password=${var.sql_admin_password};Encrypt=True;TrustServerCertificate=False;Connect Timeout=90"
+  }
+
   template {
     min_replicas = 0
     max_replicas = 1
 
     container {
       name   = "api"
-      image  = "mcr.microsoft.com/k8se/quickstart:latest"
+      image  = "ghcr.io/yasigm/treatygraph-api:latest"
       cpu    = 0.25
       memory = "0.5Gi"
+
+      env {
+        name        = "ConnectionStrings__Default"
+        secret_name = "sql-connection"
+      }
     }
   }
 
   ingress {
     external_enabled = true
-    target_port      = 80
+    target_port      = 8080
 
     traffic_weight {
       percentage      = 100
@@ -94,7 +104,7 @@ resource "azapi_resource" "db" {
 
   body = {
     sku = {
-      name     = "GP_S_Gen5_2"
+      name     = "GP_S_Gen5"
       tier     = "GeneralPurpose"
       family   = "Gen5"
       capacity = 2
