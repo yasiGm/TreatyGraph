@@ -136,7 +136,8 @@ export default function App() {
           Sources: Correlates of War (Formal Alliances v4.1; Inter-State War Data v4.0; Intra-State War Data v4.1;
           Diplomatic Exchange v2006.1; State System Membership v2024), ATOP 5.1 (Leeds et al.), Archigos 4.1 (Goemans,
           Gleditsch &amp; Chiozza), the UCDP/PRIO Armed Conflict Dataset v26.1 (Uppsala Conflict Data Program, CC BY 4.0) and
-          Wikidata (CC0) for current heads of state and government. Country identity and borders follow COW state-system
+          Wikidata (CC0) for current heads of state and government and for diplomatic relations, and the Gleditsch &amp; Ward list
+          of independent states (1999). Country identity and borders follow COW state-system
           membership. Built for portfolio / non-commercial use. Data are served from SQL Server through an ASP.NET Core API; see
           the README for citations and licence notes.
         </p>

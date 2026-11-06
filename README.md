@@ -68,11 +68,13 @@ The raw CSVs must be in `data/raw/` (git-ignored, see "Data files" below).
 | Alliances | COW Formal Alliances v4.1 | 1816–2012 | Dyad-level start/end dates |
 | Alliances | ATOP 5.1 | 1815–2018 | Member-level entry/exit turned into pair windows; phases of one treaty are merged |
 | Wars | COW Inter-State War Data v4.0 | 1823–2007 | "Against each other" and "same side" are separate event types |
-| Wars | UCDP/PRIO Armed Conflict v26.1 | 2008–2025 | Inter-state conflicts only, continuing the COW wars; year-level dates |
+| Wars | UCDP/PRIO Armed Conflict v26.1 | 1946–2025 | Inter-state conflicts only; year-level dates. 1946–2007: only conflicts COW does not already list for that pair (smaller conflicts, 25+ deaths a year); from 2008 it continues the COW wars |
 | Diplomacy | COW Diplomatic Exchange v2006.1 | 1817–2005 | **5-year snapshots only**; only changes in the coded level are kept |
+| Diplomacy | Wikidata (diplomatic relations, P530) | to 2026 | Today's countries only: dates relations were established or ended when Wikidata has them, plus a 2026 snapshot of relations in place |
 | Leaders | Archigos 4.1 | to 2015 | All 188 countries in Archigos; fills the years Wikidata does not cover |
 | Leaders | Wikidata (heads of state and of government) | 1816–2026 | Current states only, history uneven; shown as two lanes (state / government) where the data tells them apart |
 | Countries | COW State System Membership v2024 | 1816–2024 | Defines who exists when |
+| Countries | Gleditsch & Ward list of independent states | 1816–2017 | Backup: used when the COW list is missing (codes translated to COW codes); also translates UCDP's G&W codes |
 
 The same record reported by two sources (a treaty in both COW and ATOP) is shown once with both badges (the UI merges identical rows).
 
@@ -96,12 +98,18 @@ data/raw/cow_wars/Intra-StateWarData_v4.1.csv
 data/raw/ucdp/UcdpPrioConflict_v26_1.csv      (UCDP/PRIO Armed Conflict v26.1)
 data/raw/cow_diplomacy/Diplomatic_Exchange_2006v1.csv
 data/raw/cow_states/statelist2024.csv
+data/raw/gleditsch_ward/iisystem.dat          (and microstatessystem.dat; .txt names work too)
+data/raw/wikidata_diplomacy/diplomatic_relations.csv   (optional, see below)
 ```
 
 `data/raw/leaders/leaders_combined.csv` is **not** in the repository (git-ignored, like `data/raw/`). It has the columns `ccode,leader,start,end,exit,role,source` (dates `YYYY-MM-DD`, UTF-8; `role` is `state`, `government` or `both`) and is built from two sources:
 
 1. **Wikidata**: run a SPARQL query on https://query.wikidata.org for people holding positions that are a head of state (Q48352) or head of government (Q2285706) of a sovereign state, with start and end dates from 1816, and download the result as CSV. Map country names to COW codes, drop irrelevant offices (mayors, regional governors, acting or deputy posts) and mark offices that are both as `both`.
 2. **Archigos 4.1** (https://rochester.edu/college/faculty/hgoemans/data.htm): rename the columns to `ccode,leader,start,end,exit`. These rows fill the years before Wikidata's first record for a country, and all years for countries Wikidata lacks.
+
+`data/raw/wikidata_diplomacy/diplomatic_relations.csv` is also built, not downloaded: query Wikidata for "diplomatic relation" (P530) statements between countries that have an ISO 3166 code, with the start time (P580) and end time (P582) qualifiers and their precision, map country names to COW codes, and write the columns `ccode1,ccode2,start,end` (dates as `YYYY`, `YYYY-MM` or `YYYY-MM-DD` to match the precision; empty when unknown). The importer skips this source when the file is missing.
+
+Gleditsch & Ward: Gleditsch, K. S. and M. D. Ward (1999), "Interstate System Membership: A Revised List of the Independent States since 1816", *International Interactions* 25. Download from http://ksgleditsch.com/data-4.html.
 
 ## Ideas / next steps
 

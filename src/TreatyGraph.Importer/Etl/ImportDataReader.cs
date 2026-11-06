@@ -9,7 +9,7 @@ public static class ImportDataReader
 {
     public static ImportData Read(SourceFiles files)
     {
-        var countries = CountryLoader.Load(files.StateList);
+        var countries = CountryLoader.Load(files);
 
         // Some source codes (e.g. ATOP members) are not COW states; the schema has foreign keys,
         // so rows that reference them are dropped here and reported.

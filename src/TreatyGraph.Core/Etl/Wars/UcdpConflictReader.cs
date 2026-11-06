@@ -1,4 +1,5 @@
 using TreatyGraph.Core.Csv;
+using TreatyGraph.Core.Etl.Countries;
 using TreatyGraph.Core.Model;
 
 namespace TreatyGraph.Core.Etl.Wars;
@@ -16,15 +17,15 @@ public sealed record UcdpPeriod(int StartYear, int EndYear, int MaxIntensity, bo
 
 /// <summary>
 /// Parses the UCDP/PRIO Armed Conflict Dataset (one row per conflict per year) and keeps only
-/// inter-state conflicts (type_of_conflict = 2) from <see cref="FirstYear"/> on, because the COW
-/// inter-state war data already covers the earlier years. UCDP uses Gleditsch-Ward country codes,
-/// which match the COW codes for the states we use; unknown codes are dropped.
+/// inter-state conflicts (type_of_conflict = 2) from <c>firstYear</c> on (default <see cref="FirstYear"/>,
+/// because the COW inter-state war data already covers the earlier years). UCDP uses Gleditsch-Ward country codes,
+/// translated to COW codes by <see cref="GleditschWard"/>; unknown codes are dropped.
 /// </summary>
 public static class UcdpConflictReader
 {
     public const int FirstYear = 2008;
 
-    public static List<UcdpConflict> FromRows(IEnumerable<Dictionary<string, string>> rows, CountryDirectory countries)
+    public static List<UcdpConflict> FromRows(IEnumerable<Dictionary<string, string>> rows, CountryDirectory countries, int firstYear = FirstYear)
     {
         var inter = rows
             .Where(r => Num.ParseInt(r.Get("type_of_conflict")) == 2)
@@ -37,14 +38,14 @@ public static class UcdpConflictReader
         foreach (var g in inter.GroupBy(x => x.Row.Get("conflict_id")))
         {
             var first = g.First().Row;
-            var sideA = Codes(g.Select(x => x.Row.Get("gwno_a")), countries);
-            var sideB = Codes(g.Select(x => x.Row.Get("gwno_b")), countries);
+            var sideA = Codes(g.Select(x => (x.Row.Get("gwno_a"), x.Year!.Value)), countries);
+            var sideB = Codes(g.Select(x => (x.Row.Get("gwno_b"), x.Year!.Value)), countries);
             if (sideA.Count == 0 || sideB.Count == 0)
             {
                 continue;
             }
 
-            var years = g.Where(x => x.Year >= FirstYear)
+            var years = g.Where(x => x.Year >= firstYear)
                 .GroupBy(x => x.Year!.Value)
                 .ToDictionary(y => y.Key, y => y.Max(x => Num.ParseInt(x.Row.Get("intensity_level")) ?? 1));
 
@@ -71,11 +72,13 @@ public static class UcdpConflictReader
         return result;
     }
 
-    private static List<int> Codes(IEnumerable<string> cells, CountryDirectory countries) =>
-        cells.SelectMany(c => c.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-            .Select(s => Num.ParseInt(s))
-            .Where(c => c is not null && countries.Contains(c.Value))
-            .Select(c => c!.Value)
+    // UCDP cells hold Gleditsch-Ward codes, sometimes several separated by commas; each is turned into a COW code.
+    private static List<int> Codes(IEnumerable<(string Cell, int Year)> cells, CountryDirectory countries) =>
+        cells.SelectMany(c => c.Cell.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(s => Num.ParseInt(s))
+                .Where(code => code is not null)
+                .Select(code => GleditschWard.ToCow(code!.Value, c.Year)))
+            .Where(countries.Contains)
             .Distinct()
             .ToList();
 }

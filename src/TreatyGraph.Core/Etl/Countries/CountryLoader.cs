@@ -11,6 +11,35 @@ public static class CountryLoader
 {
     public static CountryDirectory Load(string path) => FromRows(CsvReader.ReadDictionaries(path));
 
+    /// <summary>
+    /// The COW state list when it is there; otherwise the Gleditsch and Ward list (codes translated to COW codes),
+    /// so the site does not depend on a single source for which countries exist.
+    /// </summary>
+    public static CountryDirectory Load(SourceFiles files)
+    {
+        var year = DateTime.UtcNow.Year;
+        CountryDirectory states;
+        if (File.Exists(files.StateList))
+        {
+            states = Load(files.StateList);
+        }
+        else if (files.GleditschWardStates.Any(File.Exists))
+        {
+            Console.WriteLine("  COW state list not found; using the Gleditsch and Ward list instead.");
+            states = GleditschWard.Load(files.GleditschWardStates, year);
+        }
+        else
+        {
+            throw new FileNotFoundException("No country list found (COW statelist2024.csv or Gleditsch-Ward iisystem.dat).", files.StateList);
+        }
+
+        return WithExtraTerritories(states, year);
+    }
+
+    /// <summary>Adds Palestine, Vatican City and the territories in <see cref="ExtraTerritories"/>.</summary>
+    public static CountryDirectory WithExtraTerritories(CountryDirectory states, int currentYear) =>
+        new(states.All.Concat(ExtraTerritories.All(currentYear).Where(t => !states.Contains(t.Ccode))));
+
     public static CountryDirectory FromRows(IEnumerable<Dictionary<string, string>> rows)
     {
         var order = new List<int>();

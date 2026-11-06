@@ -21,6 +21,7 @@ public static class RuleCatalog
         new InterStateWarRule(),
         new UcdpInterStateRule(),
         new DiplomacyRule(),
+        new WikidataDiplomacyRule(),
     };
 
     public static readonly IReadOnlyList<IEtlRule<CountryWarRow>> CountryWars = new IEtlRule<CountryWarRow>[]
