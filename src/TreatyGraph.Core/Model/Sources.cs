@@ -11,5 +11,6 @@ public static class Sources
         new CoverageItem("UCDP/PRIO Armed Conflict v26.1", 2008, 2025, "Inter-state conflicts only, from 2008 (continues the COW wars)."),
         new CoverageItem("COW Diplomatic Exchange v2006.1", 1817, 2005, "5-year snapshots, not continuous."),
         new CoverageItem("Archigos 4.1 (leaders)", 1848, 2015, "All countries covered by Archigos."),
+        new CoverageItem("Wikidata (heads of state and government)", 1816, 2026, "Current states only; history is uneven. Archigos fills earlier years."),
     };
 }

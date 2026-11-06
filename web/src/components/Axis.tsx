@@ -1,10 +1,10 @@
-import { START, pct, ticksFrom } from "../scale";
+import { END, START, pct, ticksFrom } from "../scale";
 
-export function Axis({ from = START }: { from?: number }) {
+export function Axis({ from = START, to = END }: { from?: number; to?: number }) {
   return (
     <div className="axis">
-      {ticksFrom(from).map((year) => (
-        <span key={year} style={{ left: `${pct(year, from)}%` }}>
+      {ticksFrom(from, to).map((year) => (
+        <span key={year} style={{ left: `${pct(year, from, to)}%` }}>
           {year}
         </span>
       ))}

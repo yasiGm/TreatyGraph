@@ -11,7 +11,7 @@ public sealed record SourceFiles(string DataDir)
     public string IntraStateWars => Raw("cow_wars", "Intra-StateWarData_v4.1.csv");
     public string UcdpConflicts => Raw("ucdp", "UcdpPrioConflict_v26_1.csv");
     public string Diplomacy => Raw("cow_diplomacy", "Diplomatic_Exchange_2006v1.csv");
-    public string Leaders => Raw("archigos", "archigos_4.1_leaders.csv");
+    public string Leaders => Raw("leaders", "leaders_combined.csv");
 
     private string Raw(string folder, string file) => Path.Combine(DataDir, "raw", folder, file);
 }

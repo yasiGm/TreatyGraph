@@ -38,6 +38,8 @@ export interface Leader {
   s: string;
   e: string;
   exit: string;
+  role: "state" | "government" | "both";
+  source: string;
 }
 
 export interface War {

@@ -70,7 +70,8 @@ The raw CSVs must be in `data/raw/` (git-ignored, see "Data files" below).
 | Wars | COW Inter-State War Data v4.0 | 1823–2007 | "Against each other" and "same side" are separate event types |
 | Wars | UCDP/PRIO Armed Conflict v26.1 | 2008–2025 | Inter-state conflicts only, continuing the COW wars; year-level dates |
 | Diplomacy | COW Diplomatic Exchange v2006.1 | 1817–2005 | **5-year snapshots only**; only changes in the coded level are kept |
-| Leaders | Archigos 4.1 | to 2015 | All 188 countries in Archigos |
+| Leaders | Archigos 4.1 | to 2015 | All 188 countries in Archigos; fills the years Wikidata does not cover |
+| Leaders | Wikidata (heads of state and of government) | 1816–2026 | Current states only, history uneven; shown as two lanes (state / government) where the data tells them apart |
 | Countries | COW State System Membership v2024 | 1816–2024 | Defines who exists when |
 
 The same record reported by two sources (a treaty in both COW and ATOP) is shown once with both badges (the UI merges identical rows).
@@ -97,7 +98,10 @@ data/raw/cow_diplomacy/Diplomatic_Exchange_2006v1.csv
 data/raw/cow_states/statelist2024.csv
 ```
 
-`data/raw/archigos/archigos_4.1_leaders.csv` is **not** in the repository (git-ignored, like `data/raw/`). Build it from Archigos 4.1 (https://rochester.edu/college/faculty/hgoemans/data.htm): keep all rows and rename the columns to `ccode,leader,start,end,exit` (from `ccode,leader,startdate,enddate,exit`), with dates as `YYYY-MM-DD`, UTF-8.
+`data/raw/leaders/leaders_combined.csv` is **not** in the repository (git-ignored, like `data/raw/`). It has the columns `ccode,leader,start,end,exit,role,source` (dates `YYYY-MM-DD`, UTF-8; `role` is `state`, `government` or `both`) and is built from two sources:
+
+1. **Wikidata**: run a SPARQL query on https://query.wikidata.org for people holding positions that are a head of state (Q48352) or head of government (Q2285706) of a sovereign state, with start and end dates from 1816, and download the result as CSV. Map country names to COW codes, drop irrelevant offices (mayors, regional governors, acting or deputy posts) and mark offices that are both as `both`.
+2. **Archigos 4.1** (https://rochester.edu/college/faculty/hgoemans/data.htm): rename the columns to `ccode,leader,start,end,exit`. These rows fill the years before Wikidata's first record for a country, and all years for countries Wikidata lacks.
 
 ## Ideas / next steps
 

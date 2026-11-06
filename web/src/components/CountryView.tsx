@@ -1,5 +1,6 @@
 import { prettyDate } from "../dates";
 import type { CountryProfile } from "../types";
+import { CountryLeaders } from "./CountryLeaders";
 import { LeaderList } from "./LeaderList";
 
 export function CountryView({ country }: { country: CountryProfile }) {
@@ -14,6 +15,7 @@ export function CountryView({ country }: { country: CountryProfile }) {
         </p>
       </div>
 
+      <CountryLeaders country={country} />
       <LeaderList country={country} title="Leaders" />
 
       <div className="card">

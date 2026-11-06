@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { prettyDate, yearFraction } from "../dates";
+import { useMemo, useState } from "react";
+import { yearFraction } from "../dates";
 import { describeRange, type MergedEvent } from "../events";
 import { packRows } from "../layout";
 import { END, START, pct } from "../scale";
 import type { CountryProfile, EventType, Leader } from "../types";
 import { Axis } from "./Axis";
+import { LeaderDetail, LeaderLane, leaderLanes } from "./LeaderLanes";
 
 const ROWS: { type: EventType; label: string }[] = [
   { type: "alliance", label: "Alliances" },
@@ -15,93 +16,21 @@ const ROWS: { type: EventType; label: string }[] = [
 
 const ROW_HEIGHT = 20;
 
-interface LeaderLaneProps {
-  country: CountryProfile;
-  from: number;
-  selected: Leader | null;
-  onSelect: (leader: Leader, country: CountryProfile) => void;
-}
-
-const MIN_LABEL_PX = 14; // thinner bars get no text
-const LINE_PX = 13;      // width of one line of sideways text
-const MAX_ONE_LINE = 11; // names up to this many letters (spaces and hyphens not counted) stay on one line
-
-// Names are written sideways with each word on its own line (a hyphen also starts a new line; initials stay with the word before).
-// A narrow bar shows as many words as fit, keeping the last ones (the family name) first.
-function labelFor(name: string, barPx: number): string {
-  if (barPx < MIN_LABEL_PX) return "";
-  if (name.replace(/[\s-]/g, "").length <= MAX_ONE_LINE) return name;
-  const lines: string[] = [];
-  for (const word of name.split(/\s+|(?<=-)/).filter(Boolean)) {
-    if (lines.length > 0 && word.length <= 2) lines[lines.length - 1] += " " + word;
-    else lines.push(word);
-  }
-  const fit = Math.max(1, Math.floor((barPx - 4) / LINE_PX));
-  return lines.slice(-fit).join("\n");
-}
-
-function LeaderLane({ country, from, selected, onSelect }: LeaderLaneProps) {
-  const label = `${country.abbr} leaders`;
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [trackPx, setTrackPx] = useState(1000);
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    const update = () => setTrackPx(el.clientWidth);
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div className="lane">
-      <span className="lane-label" title={label}>
-        {label}
-      </span>
-      <div className="track leaders" ref={trackRef}>
-        {country.leaders === null ? (
-          <span className="empty">no leader data for this country</span>
-        ) : (
-          country.leaders.map((leader, i) => {
-            if (yearFraction(leader.e, true) < from) return null;
-            const left = pct(yearFraction(leader.s), from);
-            const width = Math.max(pct(yearFraction(leader.e, true), from) - left, 0.2);
-            const text = labelFor(leader.name, (width / 100) * trackPx);
-            return (
-              <button
-                key={i}
-                type="button"
-                className={`leader vertical ${i % 2 ? "l2" : "l1"}${selected === leader ? " active" : ""}`}
-                style={{ left: `${left}%`, width: `${width}%` }}
-                title={`${leader.name} (${prettyDate(leader.s)} – ${prettyDate(leader.e)}; ended: ${leader.exit})`}
-                onClick={() => onSelect(leader, country)}
-              >
-                {text}
-              </button>
-            );
-          })
-        )}
-      </div>
-    </div>
-  );
-}
-
 interface EventLaneProps {
   label: string;
   events: MergedEvent[];
   selected: MergedEvent | null;
   onSelect: (e: MergedEvent) => void;
   from: number;
+  to: number;
 }
 
-function EventLane({ label, events, selected, onSelect, from }: EventLaneProps) {
+function EventLane({ label, events, selected, onSelect, from, to }: EventLaneProps) {
   const items = events.map((e) => {
     const start = yearFraction(e.s);
     const end = e.e ? yearFraction(e.e, true) : e.on ? END : start;
-    return { e, start, end: Math.max(end, start + 2) };
-  }).filter((item) => item.end >= from);
+    return { e, start, end: Math.max(end, start + (to - from) * 0.01) };
+  }).filter((item) => item.end >= from && item.start <= to);
   const { rows, count } = packRows(items);
 
   return (
@@ -110,8 +39,8 @@ function EventLane({ label, events, selected, onSelect, from }: EventLaneProps) 
       <div className="track" style={{ height: count * ROW_HEIGHT + 8 }}>
         {items.length === 0 && <span className="empty">no records</span>}
         {items.map((item, i) => {
-          const left = pct(item.start, from);
-          const width = Math.max(pct(item.end, from) - left, 0.6);
+          const left = pct(item.start, from, to);
+          const width = Math.max(pct(item.end, from, to) - left, 0.6);
           return (
             <button
               key={i}
@@ -145,6 +74,12 @@ export function Timeline({ a, b, events }: Props) {
     setLeader({ leader: l, country });
     setSelectedEvent(null);
   };
+  // Built once per pair so a clicked leader keeps matching its bar.
+  const lanes = useMemo(
+    () => [a, b].flatMap((country) => leaderLanes(country).map((lane) => ({ ...lane, country }))),
+    [a, b],
+  );
+
   // The axis starts at the earliest year we have any data for either country.
   const from = useMemo(() => {
     const years = [
@@ -154,6 +89,16 @@ export function Timeline({ a, b, events }: Props) {
     return years.length === 0 ? START : Math.max(START, Math.floor(Math.min(...years)));
   }, [a, b, events]);
 
+  // Zoom: show only a chosen range of years, so very short terms become wide enough to see.
+  const [zoom, setZoom] = useState<{ from: number; to: number } | null>(null);
+  const viewFrom = zoom ? Math.max(zoom.from, from) : from;
+  const viewTo = zoom ? zoom.to : END;
+  const years = Array.from({ length: END - Math.floor(from) + 1 }, (_, i) => Math.floor(from) + i);
+  const setRange = (f: number, t: number) => {
+    if (f === Math.floor(from) && t === END) setZoom(null);
+    else setZoom({ from: f, to: t });
+  };
+
   return (
     <div className="card">
       <h2>
@@ -161,9 +106,50 @@ export function Timeline({ a, b, events }: Props) {
       </h2>
       <p className="muted">Click a bar or a leader for details. The axis starts at the first year with data for either country.</p>
 
+      <div className="zoom">
+        <span>Zoom to years:</span>
+        <select
+          aria-label="From year"
+          value={Math.floor(viewFrom)}
+          onChange={(ev) => {
+            const f = Number(ev.target.value);
+            setRange(f, Math.max(viewTo, f + 1));
+          }}
+        >
+          {years.filter((y) => y < END).map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>
+        <span>to</span>
+        <select
+          aria-label="To year"
+          value={viewTo}
+          onChange={(ev) => {
+            const t = Number(ev.target.value);
+            setRange(Math.min(Math.floor(viewFrom), t - 1), t);
+          }}
+        >
+          {years.filter((y) => y > Math.floor(from)).map((y) => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>
+        <button type="button" disabled={!zoom} onClick={() => setZoom(null)}>Show all years</button>
+      </div>
+
       <div className="timeline">
-        <LeaderLane country={a} from={from} selected={leader?.leader ?? null} onSelect={selectLeader} />
-        <LeaderLane country={b} from={from} selected={leader?.leader ?? null} onSelect={selectLeader} />
+{lanes.map((lane) => (
+          <LeaderLane
+            key={`${lane.country.c}-${lane.label}`}
+            label={lane.label}
+            kind={lane.kind}
+            country={lane.country}
+            leaders={lane.leaders}
+            from={viewFrom}
+            to={viewTo}
+            selected={leader?.leader ?? null}
+            onSelect={selectLeader}
+          />
+        ))}
         {ROWS.map((row) => (
           <EventLane
             key={row.type}
@@ -171,22 +157,14 @@ export function Timeline({ a, b, events }: Props) {
             events={events.filter((e) => e.t === row.type)}
             selected={selected}
             onSelect={setSelected}
-            from={from}
+            from={viewFrom}
+            to={viewTo}
           />
         ))}
-        <Axis from={from} />
+        <Axis from={viewFrom} to={viewTo} />
       </div>
 
-      {leader && (
-        <div className="detail leader-detail">
-          <strong>{leader.leader.name}</strong>
-          <span>
-            {leader.country.name}: {prettyDate(leader.leader.s)} – {prettyDate(leader.leader.e)}
-          </span>
-          <p>Left office: {leader.leader.exit}.</p>
-          <small>Source: Archigos 4.1</small>
-        </div>
-      )}
+      {leader && <LeaderDetail leader={leader.leader} country={leader.country} />}
 
       {selected && (
         <div className={`detail ${selected.t}`}>
@@ -206,7 +184,9 @@ export function Timeline({ a, b, events }: Props) {
         <span><i className="war" />war against each other</span>
         <span><i className="coalition" />war on the same side</span>
         <span><i className="diplomacy" />diplomatic snapshot</span>
-        <span><i className="l1" /><i className="l2" />leaders (alternating)</span>
+        <span><i className="k-state" />head of state / monarch</span>
+        <span><i className="k-government" />head of government</span>
+        <span><i className="k-both" />leader (one combined list)</span>
       </div>
       <p className="muted small">
         * “ongoing” = still open when that dataset ends (COW alliances 2012, ATOP 2018), not necessarily still in force today.

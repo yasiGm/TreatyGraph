@@ -7,6 +7,7 @@ const SHORT: Record<string, string> = {
   "COW Inter-State Wars v4.0": "COW Wars",
   "COW Alliances v4.1": "COW Alliances",
   "Archigos 4.1 (leaders)": "Archigos (leaders)",
+  "Wikidata (heads of state and government)": "Wikidata (leaders)",
 };
 
 interface Props {

@@ -10,7 +10,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT Name, StartDate, EndDate, ExitType
+    SELECT Name, StartDate, EndDate, ExitType, Role, Source
     FROM dbo.Leader
     WHERE Ccode = @Ccode
     ORDER BY StartDate;

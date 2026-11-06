@@ -36,4 +36,21 @@ public class LoaderTests
         Assert.Equal(new DateOnly(1997, 8, 3), leader.Start);
         Assert.Equal("Regular", leader.ExitType);
     }
+
+    [Fact]
+    public void Leaders_read_role_and_source_when_present_and_default_to_archigos_both()
+    {
+        var rows = new[]
+        {
+            Row(("ccode", "200"), ("leader", "Starmer"), ("start", "2024-07-05"), ("end", "2025-12-31"), ("exit", "In office"), ("role", "government"), ("source", "Wikidata")),
+            Row(("ccode", "200"), ("leader", "Disraeli"), ("start", "1874-02-20"), ("end", "1880-04-23"), ("exit", "Regular")),
+        };
+
+        var leaders = new LeaderRule().FromRows(rows);
+
+        Assert.Equal("government", leaders[0].Role);
+        Assert.Equal("Wikidata", leaders[0].Source);
+        Assert.Equal("both", leaders[1].Role);
+        Assert.Equal("Archigos 4.1", leaders[1].Source);
+    }
 }

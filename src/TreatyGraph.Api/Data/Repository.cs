@@ -90,7 +90,7 @@ public sealed class Repository
         var leaders = leaderRows.Count == 0
             ? null
             : (IReadOnlyList<LeaderDto>)leaderRows
-                .Select(l => new LeaderDto(l.Name, l.StartDate.ToString("yyyy-MM-dd"), l.EndDate.ToString("yyyy-MM-dd"), l.ExitType))
+                .Select(l => new LeaderDto(l.Name, l.StartDate.ToString("yyyy-MM-dd"), l.EndDate.ToString("yyyy-MM-dd"), l.ExitType, l.Role, l.Source))
                 .ToList();
 
         var wars = (await QueryAsync<WarRow>(conn, "dbo.usp_GetCountryWars", args))

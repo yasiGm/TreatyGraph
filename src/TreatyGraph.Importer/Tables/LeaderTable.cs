@@ -4,7 +4,7 @@ namespace TreatyGraph.Importer.Tables;
 
 public sealed class LeaderTable : Table<LeaderTable.Row>
 {
-    public sealed record Row(int Ccode, string Name, DateTime StartDate, DateTime EndDate, string ExitType);
+    public sealed record Row(int Ccode, string Name, DateTime StartDate, DateTime EndDate, string ExitType, string Role, string Source);
 
     public override string Name => "Leader";
 
@@ -14,5 +14,7 @@ public sealed class LeaderTable : Table<LeaderTable.Row>
             Trunc(l.Name, 120),
             l.Start.ToDateTime(TimeOnly.MinValue),
             l.End.ToDateTime(TimeOnly.MinValue),
-            Trunc(l.ExitType, 60)));
+            Trunc(l.ExitType, 60),
+            Trunc(l.Role, 12),
+            Trunc(l.Source, 30)));
 }

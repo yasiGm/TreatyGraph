@@ -88,7 +88,7 @@ summary { cursor: pointer; font-weight: 600; }
 .lane { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .lane-label {
   width: 120px; flex: none; font-size: 0.9rem; font-weight: 600; color: var(--ink); text-align: right;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: 1.2;
 }
 .track { position: relative; flex: 1; min-height: 22px; background: #ffffff; border: 1px solid var(--line); border-radius: 1px; overflow: hidden; }
 .track.leaders { height: 100px; background: #ffffff; border: 1px solid var(--line); }
@@ -194,10 +194,50 @@ summary { cursor: pointer; font-weight: 600; }
 .detail.leader-detail { background: #f1f1f3; border-left-color: #6b6b73; }
 
 .leader { display: flex; align-items: center; }
-.leader.vertical {
-  writing-mode: vertical-rl; transform: rotate(180deg); justify-content: flex-start;
-  padding: 4px 0; text-overflow: clip; font-size: 0.75rem; align-items: center; line-height: 1;
-}
+.leader.vertical { justify-content: center; padding: 4px 0; text-overflow: clip; font-size: 0.75rem; align-items: center; line-height: 1; }
+/* only the text is turned sideways, so the coloured edge of the bar stays where it is */
+.vtext { writing-mode: vertical-rl; transform: rotate(180deg); white-space: pre; line-height: 1.15; max-height: 100%; overflow: hidden; }
 
 
 .leader.vertical { white-space: pre; line-height: 1.15; text-overflow: clip; }
+
+.leader { white-space: pre; line-height: 1.2; }
+
+/* leaders: heads of state, heads of government and combined lists look different */
+.leader.k-state { background: #e3bfca; border-top: 4px solid var(--brand); }
+.leader.k-state.l2 { background: #f8ecef; }
+.leader.k-government { background: #bccadf; border-bottom: 4px solid #4f6180; }
+.leader.k-government.l2 { background: #eff2f8; }
+.leader.k-both { background: #d2d2d8; border-left: 4px solid #7a7a85; }
+.leader.k-both.l2 { background: #f5f5f7; }
+.leader.k-state, .leader.k-government, .leader.k-both { padding-top: 6px; }
+.legend i.k-state { background: #e3bfca; border-top: 3px solid var(--brand); }
+.legend i.k-government { background: #bccadf; border-bottom: 3px solid #4f6180; }
+.legend i.k-both { background: #d2d2d8; border-left: 3px solid #7a7a85; }
+.detail.leader-detail.k-state { background: #f5e6ea; border-left-color: var(--brand); }
+.detail.leader-detail.k-government { background: #eaeef4; border-left-color: #4f6180; }
+.detail.leader-detail.k-both { background: #f2f2f4; border-left-color: #7a7a85; }
+ul.clean li.k-state { border-left: 4px solid var(--brand); padding-left: 10px; }
+ul.clean li.k-government { border-left: 4px solid #4f6180; padding-left: 10px; }
+ul.clean li.k-both { border-left: 4px solid #7a7a85; padding-left: 10px; }
+
+.leader.k-state, .leader.k-government, .leader.k-both { border-right: 1px solid #fff; }
+
+.leader { min-width: 10px; }
+
+/* a very short term must not be hidden by the longer bar that follows it */
+.leader.short { z-index: 2; }
+.leader:hover, .leader.active { z-index: 3; }
+
+.zoom { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 12px; font-size: 0.9rem; }
+.zoom select { padding: 3px 6px; border: 1px solid #c9c2c5; background: #fff; border-radius: 2px; font: inherit; }
+.zoom button { padding: 4px 10px; border: 1px solid var(--brand); background: #fff; color: var(--brand); border-radius: 2px; font: inherit; cursor: pointer; }
+.zoom button:disabled { opacity: 0.4; cursor: default; }
+
+/* round icon next to each stat card title */
+.stat-head { display: flex; align-items: center; gap: 10px; }
+.stat-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; flex: none;
+  color: var(--brand); background: var(--brand-soft); }
+.stat.orange .stat-icon { color: var(--orange); background: #fdeee6; }
+.stat.purple .stat-icon { color: var(--purple); background: #efeafa; }
+.stat.blue .stat-icon { color: var(--blue); background: #e8f1fa; }

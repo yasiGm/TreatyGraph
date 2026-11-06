@@ -4,7 +4,10 @@ using TreatyGraph.Core.Model;
 
 namespace TreatyGraph.Core.Etl.Leaders;
 
-/// <summary>Loads the Archigos extract (columns: ccode,leader,start,end,exit).</summary>
+/// <summary>
+/// Loads the combined leaders file (columns: ccode,leader,start,end,exit and optionally role,source).
+/// Without the optional columns a row counts as an Archigos "both" row.
+/// </summary>
 public sealed class LeaderRule : IEtlRule<Leader>
 {
     public IReadOnlyList<Leader> Load(SourceFiles files, CountryDirectory countries) =>
@@ -23,7 +26,16 @@ public sealed class LeaderRule : IEtlRule<Leader>
 
             var start = DateOnly.ParseExact(r["start"].Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
             var end = DateOnly.ParseExact(r["end"].Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            list.Add(new Leader(code.Value, r["leader"].Trim(), start, end, r["exit"].Trim()));
+            var role = r.Get("role").Trim();
+            var source = r.Get("source").Trim();
+            list.Add(new Leader(
+                code.Value,
+                r["leader"].Trim(),
+                start,
+                end,
+                r["exit"].Trim(),
+                role.Length > 0 ? role : "both",
+                source.Length > 0 ? source : "Archigos 4.1"));
         }
 
         return list;
