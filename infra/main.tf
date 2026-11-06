@@ -37,6 +37,11 @@ resource "azurerm_container_app" "api" {
   revision_mode                = "Single"
   workload_profile_name        = "Consumption"
 
+  # The image is deployed by GitHub Actions, so Terraform must not reset it.
+  lifecycle {
+    ignore_changes = [template[0].container[0].image]
+  }
+
   secret {
     name  = "sql-connection"
     value = "Server=tcp:${azurerm_mssql_server.main.fully_qualified_domain_name},1433;Database=treatygraph;User ID=tgadmin;Password=${var.sql_admin_password};Encrypt=True;TrustServerCertificate=False;Connect Timeout=90"
