@@ -16,7 +16,7 @@ COPY src/ src/
 RUN dotnet publish src/TreatyGraph.Api -c Release -o /app --no-restore
 
 # 3) Final image: the API, serving the React build as its web page
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build /app .
 RUN rm -rf wwwroot/*
