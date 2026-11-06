@@ -1,6 +1,6 @@
 // These types describe the JSON that the ASP.NET Core API returns.
 
-export type EventType = "alliance" | "war" | "coalition" | "diplomacy";
+export type EventType = "alliance" | "war" | "coalition" | "diplomacy" | "support" | "proxy";
 
 export interface TreatyEvent {
   t: EventType;      // kind of event

@@ -95,3 +95,66 @@ public class ExtraTerritoryTests
         Assert.All(ExtraTerritories.All(2026), t => Assert.True(t.Ccode >= ExtraTerritories.FirstCode));
     }
 }
+
+public class UcdpCandidateTests
+{
+    [Fact]
+    public void Candidate_events_between_governments_are_grouped_by_pair()
+    {
+        Dictionary<string, string> Ev(string start, string end, string a, string gwa, string b, string gwb, string best, string type = "1") =>
+            Row(("type_of_violence", type), ("conflict_new_id", "9"), ("date_start", start), ("date_end", end),
+                ("side_a", a), ("gwnoa", gwa), ("side_b", b), ("gwnob", gwb), ("best", best));
+
+        var rows = new[]
+        {
+            Ev("2026-02-28", "2026-02-28", "Government of Iran", "630", "Government of United Kingdom", "", "40"),
+            Ev("2026-03-02", "2026-03-03", "Government of Iran", "630", "Government of United Kingdom", "", "10"),
+            Ev("2025-12-30", "2025-12-30", "Government of Iran", "630", "Government of France", "220", "5"),     // 2025: left to the yearly file
+            Ev("2026-04-01", "2026-04-01", "Government of Iran", "630", "Some rebel group", "", "3"),             // not a government
+            Ev("2026-04-01", "2026-04-01", "Government of Iran", "630", "Government of France", "220", "3", "3"), // one-sided violence
+        };
+
+        var events = new UcdpCandidateRule().FromRows(rows, Countries());
+
+        var e = Assert.Single(events);
+        Assert.Equal((200, 630), (e.CcodeLo, e.CcodeHi));
+        Assert.Equal(EventTypes.War, e.Type);
+        Assert.Equal("2026-02-28", e.Start.ToString());
+        Assert.Equal("2026-03-03", e.End!.Value.ToString());
+        Assert.Contains("2 recorded event(s)", e.Detail);
+        Assert.Contains("50 deaths", e.Detail);
+    }
+}
+
+public class ExternalSupportTests
+{
+    [Fact]
+    public void Support_for_a_government_and_against_one_become_two_kinds_of_events()
+    {
+        Dictionary<string, string> T(string year, string sup, string rec, string recName, string opp, string oppName, string kinds, string alleged = "0") =>
+            Row(("year", year), ("supporter", sup), ("recipient", rec), ("recipient_name", recName), ("opponent", opp),
+                ("opponent_name", oppName), ("conflict", "1"), ("location", "Iran"), ("alleged", alleged), ("elements", "0"), ("kinds", kinds));
+
+        var rows = new[]
+        {
+            // Russia backs a rebel group against Iran's government in 1980 and 1981 -> one proxy period
+            T("1980", "365", "", "Rebels", "630", "Government of Iran", "weapons"),
+            T("1981", "365", "", "Rebels", "630", "Government of Iran", "funding"),
+            // France helps Iran's government against the same rebels -> support
+            T("1990", "220", "630", "Government of Iran", "", "Rebels", "training"),
+            // alleged only -> ignored
+            T("1995", "200", "630", "Government of Iran", "", "Rebels", "troops", alleged: "1"),
+        };
+
+        var events = new TreatyGraph.Core.Etl.Support.ExternalSupportRule().FromRows(rows, Countries());
+
+        Assert.Equal(2, events.Count);
+        var proxy = Assert.Single(events, e => e.Type == EventTypes.Proxy);
+        Assert.Equal((365, 630), (proxy.CcodeLo, proxy.CcodeHi));
+        Assert.Equal("1980", proxy.Start.ToString());
+        Assert.Equal("1981", proxy.End!.Value.ToString());
+        Assert.Contains("funding, weapons", proxy.Detail);
+        var support = Assert.Single(events, e => e.Type == EventTypes.Support);
+        Assert.Equal((220, 630), (support.CcodeLo, support.CcodeHi));
+    }
+}

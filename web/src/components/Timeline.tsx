@@ -12,6 +12,8 @@ const ROWS: { type: EventType; label: string }[] = [
   { type: "war", label: "Wars" },
   { type: "coalition", label: "Side by side" },
   { type: "diplomacy", label: "Diplomacy" },
+  { type: "support", label: "Helped in a war" },
+  { type: "proxy", label: "Backed the enemy" },
 ];
 
 const ROW_HEIGHT = 20;
@@ -184,6 +186,8 @@ export function Timeline({ a, b, events }: Props) {
         <span><i className="war" />war against each other</span>
         <span><i className="coalition" />war on the same side</span>
         <span><i className="diplomacy" />diplomatic snapshot</span>
+        <span><i className="support" />helped the other's government in a war</span>
+        <span><i className="proxy" />backed the other's enemies</span>
         <span><i className="k-state" />head of state / monarch</span>
         <span><i className="k-government" />head of government</span>
         <span><i className="k-both" />leader (one combined list)</span>

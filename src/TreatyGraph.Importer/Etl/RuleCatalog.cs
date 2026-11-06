@@ -2,6 +2,7 @@ using TreatyGraph.Core.Etl;
 using TreatyGraph.Core.Etl.Alliances;
 using TreatyGraph.Core.Etl.Diplomacy;
 using TreatyGraph.Core.Etl.Leaders;
+using TreatyGraph.Core.Etl.Support;
 using TreatyGraph.Core.Etl.Wars;
 using TreatyGraph.Core.Model;
 
@@ -20,8 +21,10 @@ public static class RuleCatalog
         new AtopAllianceRule(),
         new InterStateWarRule(),
         new UcdpInterStateRule(),
+        new UcdpCandidateRule(),
         new DiplomacyRule(),
         new WikidataDiplomacyRule(),
+        new ExternalSupportRule(),
     };
 
     public static readonly IReadOnlyList<IEtlRule<CountryWarRow>> CountryWars = new IEtlRule<CountryWarRow>[]

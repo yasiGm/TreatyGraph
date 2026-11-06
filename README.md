@@ -69,6 +69,8 @@ The raw CSVs must be in `data/raw/` (git-ignored, see "Data files" below).
 | Alliances | ATOP 5.1 | 1815–2018 | Member-level entry/exit turned into pair windows; phases of one treaty are merged |
 | Wars | COW Inter-State War Data v4.0 | 1823–2007 | "Against each other" and "same side" are separate event types |
 | Wars | UCDP/PRIO Armed Conflict v26.1 | 1946–2025 | Inter-state conflicts only; year-level dates. 1946–2007: only conflicts COW does not already list for that pair (smaller conflicts, 25+ deaths a year); from 2008 it continues the COW wars |
+| Wars | UCDP Candidate Events (preliminary, monthly) | 2026 | Government-against-government events of the current year, grouped by conflict and pair; preliminary until UCDP's yearly release |
+| Support | UCDP External Support Dataset 18.1 (triad-year) | 1975–2017 | Confirmed support only: "helped in a war" (a state helped another country's government) and "backed the enemy" (a state helped someone fighting another country's government) |
 | Diplomacy | COW Diplomatic Exchange v2006.1 | 1817–2005 | **5-year snapshots only**; only changes in the coded level are kept |
 | Diplomacy | Wikidata (diplomatic relations, P530) | to 2026 | Today's countries only: dates relations were established or ended when Wikidata has them, plus a 2026 snapshot of relations in place |
 | Leaders | Archigos 4.1 | to 2015 | All 188 countries in Archigos; fills the years Wikidata does not cover |
@@ -96,7 +98,9 @@ data/raw/atop/atop5_1m.csv            (ATOP 5.1 member level)
 data/raw/cow_wars/Inter-StateWarData_v4.0.csv
 data/raw/cow_wars/Intra-StateWarData_v4.1.csv
 data/raw/ucdp/UcdpPrioConflict_v26_1.csv      (UCDP/PRIO Armed Conflict v26.1)
+data/raw/ucdp/GEDEvent_v26_01_26_09.csv       (optional: UCDP Candidate Events, Jan-Sep 2026; the newest GEDEvent_v*.csv is used)
 data/raw/cow_diplomacy/Diplomatic_Exchange_2006v1.csv
+data/raw/ucdp_esd/esd_triads.csv             (optional; built from ucdp-esd-ty-181.xlsx, see below)
 data/raw/cow_states/statelist2024.csv
 data/raw/gleditsch_ward/iisystem.dat          (and microstatessystem.dat; .txt names work too)
 data/raw/wikidata_diplomacy/diplomatic_relations.csv   (optional, see below)
@@ -110,6 +114,8 @@ data/raw/wikidata_diplomacy/diplomatic_relations.csv   (optional, see below)
 `data/raw/wikidata_diplomacy/diplomatic_relations.csv` is also built, not downloaded: query Wikidata for "diplomatic relation" (P530) statements between countries that have an ISO 3166 code, with the start time (P580) and end time (P582) qualifiers and their precision, map country names to COW codes, and write the columns `ccode1,ccode2,start,end` (dates as `YYYY`, `YYYY-MM` or `YYYY-MM-DD` to match the precision; empty when unknown). The importer skips this source when the file is missing.
 
 Gleditsch & Ward: Gleditsch, K. S. and M. D. Ward (1999), "Interstate System Membership: A Revised List of the Independent States since 1816", *International Interactions* 25. Download from http://ksgleditsch.com/data-4.html.
+
+`data/raw/ucdp_esd/esd_triads.csv` is built from UCDP's ESD triad-year Excel file (`ucdp-esd-ty-181.xlsx`): keep rows with `ext_sup = 1` and a state supporter, turn the "Government of X" names (and "X elements") into COW codes, and write `year,supporter,recipient,recipient_name,opponent,opponent_name,conflict,location,alleged,elements,kinds` (`kinds` lists the support types, e.g. `weapons; funding`).
 
 ## Ideas / next steps
 

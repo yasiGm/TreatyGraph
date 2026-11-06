@@ -244,3 +244,18 @@ ul.clean li.k-both { border-left: 4px solid #7a7a85; padding-left: 10px; }
 
 .foot .credit { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); font-weight: 600; color: var(--ink); }
 .foot .credit a { color: var(--brand); }
+
+/* external support (UCDP ESD): green = helped the other's government, dark red = backed its enemies */
+:root { --green: #3f8f5a; --proxy: #a33b2f; }
+.item.support { background: var(--green); }
+.item.proxy { background: var(--proxy); }
+.legend i.support { background: var(--green); }
+.legend i.proxy { background: var(--proxy); }
+.ev.support { border-left-color: var(--green); }
+.ev.proxy { border-left-color: var(--proxy); }
+.detail.support { background: #eaf5ee; border-left-color: var(--green); }
+.detail.proxy { background: #f8ebe9; border-left-color: var(--proxy); }
+.chip.support { border-color: var(--green); color: var(--green); }
+.chip.proxy { border-color: var(--proxy); color: var(--proxy); }
+.chip.support[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: #fff; }
+.chip.proxy[aria-pressed="true"] { background: var(--proxy); border-color: var(--proxy); color: #fff; }

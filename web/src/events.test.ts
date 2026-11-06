@@ -43,7 +43,7 @@ describe("mergeEvents", () => {
 describe("countByType", () => {
   it("counts events per type", () => {
     const counts = countByType([make({}), make({ t: "war" }), make({ t: "war" }), make({ t: "diplomacy" })]);
-    expect(counts).toEqual({ alliance: 1, war: 2, coalition: 0, diplomacy: 1 });
+    expect(counts).toEqual({ alliance: 1, war: 2, coalition: 0, diplomacy: 1, support: 0, proxy: 0 });
   });
 });
 

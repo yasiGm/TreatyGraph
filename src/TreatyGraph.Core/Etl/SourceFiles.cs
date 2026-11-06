@@ -15,6 +15,19 @@ public sealed record SourceFiles(string DataDir)
     public string InterStateWars => Raw("cow_wars", "Inter-StateWarData_v4.0.csv");
     public string IntraStateWars => Raw("cow_wars", "Intra-StateWarData_v4.1.csv");
     public string UcdpConflicts => Raw("ucdp", "UcdpPrioConflict_v26_1.csv");
+    /// <summary>The newest UCDP Candidate Events file (GEDEvent_v*.csv) in data/raw/ucdp, or null when there is none.</summary>
+    public string? UcdpCandidate
+    {
+        get
+        {
+            var dir = Path.Combine(DataDir, "raw", "ucdp");
+            return Directory.Exists(dir)
+                ? Directory.GetFiles(dir, "GEDEvent_v*.csv").OrderBy(f => f, StringComparer.Ordinal).LastOrDefault()
+                : null;
+        }
+    }
+
+    public string ExternalSupport => Raw("ucdp_esd", "esd_triads.csv");
     public string Diplomacy => Raw("cow_diplomacy", "Diplomatic_Exchange_2006v1.csv");
     public string WikidataDiplomacy => Raw("wikidata_diplomacy", "diplomatic_relations.csv");
     public string Leaders => Raw("leaders", "leaders_combined.csv");

@@ -12,7 +12,7 @@ CREATE TABLE dbo.DyadEvent
     EventId        bigint IDENTITY(1,1) NOT NULL CONSTRAINT PK_DyadEvent PRIMARY KEY,
     CcodeLo        smallint      NOT NULL,
     CcodeHi        smallint      NOT NULL,
-    EventType      varchar(12)   NOT NULL,   -- alliance | war | coalition | diplomacy
+    EventType      varchar(12)   NOT NULL,   -- alliance | war | coalition | diplomacy | support | proxy
     Source         varchar(40)   NOT NULL,
     StartYear      smallint      NOT NULL,
     StartMonth     tinyint       NULL,
@@ -26,7 +26,7 @@ CREATE TABLE dbo.DyadEvent
     Title          nvarchar(200) NOT NULL,
     Detail         nvarchar(1000) NOT NULL,
     CONSTRAINT CK_DyadEvent_Order CHECK (CcodeLo < CcodeHi),
-    CONSTRAINT CK_DyadEvent_Type CHECK (EventType IN ('alliance', 'war', 'coalition', 'diplomacy')),
+    CONSTRAINT CK_DyadEvent_Type CHECK (EventType IN ('alliance', 'war', 'coalition', 'diplomacy', 'support', 'proxy')),
     CONSTRAINT FK_DyadEvent_Lo FOREIGN KEY (CcodeLo) REFERENCES dbo.Country (Ccode),
     CONSTRAINT FK_DyadEvent_Hi FOREIGN KEY (CcodeHi) REFERENCES dbo.Country (Ccode)
 );

@@ -30,10 +30,12 @@ export interface Counts {
   war: number;
   coalition: number;
   diplomacy: number;
+  support: number;
+  proxy: number;
 }
 
 export function countByType(events: TreatyEvent[]): Counts {
-  const counts: Counts = { alliance: 0, war: 0, coalition: 0, diplomacy: 0 };
+  const counts: Counts = { alliance: 0, war: 0, coalition: 0, diplomacy: 0, support: 0, proxy: 0 };
   for (const e of events) {
     counts[e.t] += 1;
   }

@@ -7,6 +7,8 @@ const FILTERS: { type: EventType; label: string }[] = [
   { type: "war", label: "Wars against each other" },
   { type: "coalition", label: "Wars on the same side" },
   { type: "diplomacy", label: "Diplomacy" },
+  { type: "support", label: "Helped in a war" },
+  { type: "proxy", label: "Backed the enemy" },
 ];
 
 export function EventList({ events }: { events: MergedEvent[] }) {
@@ -15,6 +17,8 @@ export function EventList({ events }: { events: MergedEvent[] }) {
     war: true,
     coalition: true,
     diplomacy: true,
+    support: true,
+    proxy: true,
   });
 
   const visible = events.filter((e) => shown[e.t]);
