@@ -23,4 +23,6 @@ RUN rm -rf wwwroot/*
 COPY --from=web /web/dist ./wwwroot
 ENV Urls=http://+:8080
 EXPOSE 8080
+# Run as the unprivileged "app" user that the .NET image provides, not as root.
+USER $APP_UID
 ENTRYPOINT ["dotnet", "TreatyGraph.Api.dll"]
