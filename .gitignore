@@ -6,3 +6,6 @@ obj/
 data/raw/
 .DS_Store
 data/leaders_pilot.csv
+
+web/node_modules/
+web/dist/

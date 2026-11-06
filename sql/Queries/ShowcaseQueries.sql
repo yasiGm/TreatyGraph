@@ -50,7 +50,7 @@ JOIN dbo.Country AS c2 ON c2.Ccode = a.CcodeHi
 WHERE a.EventType = 'alliance'
 ORDER BY CountryA, CountryB;
 
--- 6) Leaders in office when a war between two countries started (pilot countries only)
+-- 6) Leaders in office when a war between two countries started
 SELECT e.Title, l.Name AS Leader, c.Name AS Country
 FROM dbo.DyadEvent AS e
 JOIN dbo.Leader    AS l ON l.Ccode IN (e.CcodeLo, e.CcodeHi)

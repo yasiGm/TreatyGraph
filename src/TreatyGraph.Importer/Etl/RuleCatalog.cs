@@ -19,12 +19,14 @@ public static class RuleCatalog
         new CowAllianceRule(),
         new AtopAllianceRule(),
         new InterStateWarRule(),
+        new UcdpInterStateRule(),
         new DiplomacyRule(),
     };
 
     public static readonly IReadOnlyList<IEtlRule<CountryWarRow>> CountryWars = new IEtlRule<CountryWarRow>[]
     {
         new CountryWarRule(),
+        new UcdpCountryWarRule(),
     };
 
     public static readonly IReadOnlyList<IEtlRule<CivilWarRow>> CivilWars = new IEtlRule<CivilWarRow>[]

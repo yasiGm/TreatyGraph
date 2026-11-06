@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------------
-   dbo.Leader - effective leaders (Archigos 4.1). Loaded for the pilot
-   countries only (see data/leaders_pilot.csv).
+   dbo.Leader - effective leaders (Archigos 4.1). Loaded for all
+   countries (see data/raw/archigos/archigos_4.1_leaders.csv).
    --------------------------------------------------------------------------- */
 SET NOCOUNT ON;
 GO
