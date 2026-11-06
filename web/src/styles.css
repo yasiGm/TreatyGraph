@@ -241,3 +241,6 @@ ul.clean li.k-both { border-left: 4px solid #7a7a85; padding-left: 10px; }
 .stat.orange .stat-icon { color: var(--orange); background: #fdeee6; }
 .stat.purple .stat-icon { color: var(--purple); background: #efeafa; }
 .stat.blue .stat-icon { color: var(--blue); background: #e8f1fa; }
+
+.foot .credit { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); font-weight: 600; color: var(--ink); }
+.foot .credit a { color: var(--brand); }

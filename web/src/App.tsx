@@ -140,6 +140,11 @@ export default function App() {
           membership. Built for portfolio / non-commercial use. Data are served from SQL Server through an ASP.NET Core API; see
           the README for citations and licence notes.
         </p>
+        <p className="credit">
+          © {new Date().getFullYear()} Yasaman Gandomi · Code released under the{" "}
+          <a href="https://github.com/yasiGm/TreatyGraph/blob/main/LICENSE">AGPL-3.0 licence</a> ·{" "}
+          <a href="https://github.com/yasiGm/TreatyGraph">GitHub</a>
+        </p>
       </footer>
     </>
   );
