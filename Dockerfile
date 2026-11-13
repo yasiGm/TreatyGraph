@@ -7,7 +7,7 @@ COPY web/ ./
 RUN npm run build
 
 # 2) Build the ASP.NET Core API
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 COPY src/TreatyGraph.Core/*.csproj src/TreatyGraph.Core/
 COPY src/TreatyGraph.Api/*.csproj src/TreatyGraph.Api/
